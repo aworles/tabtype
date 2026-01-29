@@ -5,7 +5,7 @@
   --primary: #ffffff;
   --text: #fff;
   --muted: #777;
-  --gradient: linear-gradient(90deg, #ffcc00, #ff8800);
+  --gradient: linear-gradient(90deg, #000000, #ffffff);
 }
 
 body {
