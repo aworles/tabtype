@@ -15,8 +15,9 @@ let typedChars = 0;
 let mode = "time";
 let wordsLimit = 10;
 
-let highestWpm = 0; // ⭐ persistent personal best
-const goal = 50;    // ⭐ goal value
+let highestWpm = 0;
+let goalCode = "---"; // default until goal is reached
+const goal = 50;
 
 const game = document.getElementById('game');
 const wordsEl = document.getElementById('words');
@@ -27,6 +28,7 @@ const progressRight = document.getElementById('progress-right');
 
 const goalBarFill = document.getElementById('goal-bar-fill');
 const goalBarText = document.getElementById('goal-bar-text');
+const goalCodeEl = document.getElementById('goal-code');
 
 let wordIndex = 0;
 let letterIndex = 0;
@@ -103,10 +105,25 @@ function updateGoalBar() {
   }
 }
 
+function updateGoalCode() {
+  goalCodeEl.textContent = "Code: " + goalCode;
+}
+
+updateGoalCode();
+
+goalCodeEl.addEventListener("click", () => {
+  if (goalCode !== "---") {
+    navigator.clipboard.writeText(goalCode);
+    goalCodeEl.classList.add("copied");
+    setTimeout(() => goalCodeEl.classList.remove("copied"), 600);
+  }
+});
+
 function baguetteConfetti() {
   const container = document.getElementById("confetti-container");
+  const total = 120;
 
-  for (let i = 0; i < 120; i++) {
+  for (let i = 0; i < total; i++) {
     setTimeout(() => {
       const el = document.createElement("div");
       el.className = "baguette";
@@ -114,23 +131,17 @@ function baguetteConfetti() {
       const icons = ["🥖", "🥐"];
       el.textContent = icons[Math.floor(Math.random() * icons.length)];
 
-      // Random horizontal position
-      el.style.left = Math.random() * 100 + "vw";
+      const slice = 100 / total;
+      const base = slice * i;
+      const jitter = Math.random() * slice;
+      el.style.left = (base + jitter) + "vw";
 
-      // Bigger size range
       el.style.fontSize = (1.5 + Math.random() * 2.5) + "rem";
-
-      // Much longer fall time
       el.style.animationDuration = (4 + Math.random() * 3) + "s";
 
-      // Random rotation direction
-      el.style.animationTimingFunction = "linear";
-
       container.appendChild(el);
-
-      // Remove after animation
       setTimeout(() => el.remove(), 8000);
-    }, i * 20); // staggered spawn for a wave effect
+    }, i * 20);
   }
 }
 
@@ -147,16 +158,17 @@ function endGame() {
   progressLeft.textContent = `Result`;
   progressRight.textContent = `WPM: ${wpm} | ${accuracy}%`;
 
-  // ⭐ Update highest WPM
   const oldBest = highestWpm;
   if (wpm > highestWpm) {
     highestWpm = wpm;
     updateGoalBar();
 
-    // ⭐ Trigger confetti ONLY when crossing the goal for the first time
     if (oldBest < goal && highestWpm >= goal) {
       baguetteConfetti();
-      alert("YOU REACHED YOUR GOAL! Replace this text with your own message.");
+
+      // ⭐ YOUR CUSTOM CODE HERE
+      goalCode = "49201";  
+      updateGoalCode();
     }
   }
 }
@@ -181,7 +193,6 @@ game.addEventListener('keydown', e => {
       if (correct) correctChars++;
       letterIndex++;
 
-      // ⭐ End test instantly on last letter of last word
       if (mode === "words") {
         const isLastWord = wordIndex === wordsLimit - 1;
         const isLastLetter = letterIndex === letters.length;
@@ -271,106 +282,21 @@ function updateCursor() {
   const rect = letter.getBoundingClientRect();
   const gameRect = game.getBoundingClientRect();
 
-  cursor.style.top = rect.top - gameRect.top + 'px';
-  cursor.style.left =
-    (letter === word.children[letterIndex]
-      ? rect.left
-      : rect.right) - gameRect.left + 'px';
-
-  if (rect.top - gameRect.top > 70) {
-    wordsEl.style.marginTop =
-      (parseInt(wordsEl.style.marginTop || 0) - 36) + 'px';
-  }
+  cursor.style.top = (rect.top - gameRect.top) + "px";
+  cursor.style.left = (rect.left - gameRect.left) + "px";
 }
 
-document.getElementById('newGameBtn').onclick = resetGame;
-
-document.querySelectorAll('.time-btn').forEach(btn => {
-  btn.onclick = () => {
-    gameTime = Number(btn.dataset.time);
-
-    document.querySelectorAll('.time-btn').forEach(b =>
-      b.classList.remove('active')
-    );
-    btn.classList.add('active');
-
-    resetGame();
-  };
-});
-
-document.querySelector('[data-mode="time"]').onclick = () => {
-  mode = "time";
-  document.getElementById("time-options").style.display = "flex";
-  document.getElementById("words-options").style.display = "none";
-
-  document.querySelectorAll('.mode-tab').forEach(b =>
-    b.classList.remove('active')
-  );
-  document.querySelector('[data-mode="time"]').classList.add('active');
-
-  resetGame();
-};
-
-document.querySelector('[data-mode="words"]').onclick = () => {
-  mode = "words";
-  document.getElementById("time-options").style.display = "none";
-  document.getElementById("words-options").style.display = "flex";
-
-  document.querySelectorAll('.mode-tab').forEach(b =>
-    b.classList.remove('active')
-  );
-  document.querySelector('[data-mode="words"]').classList.add('active');
-
-  resetGame();
-};
-
-document.querySelectorAll('.words-btn').forEach(btn => {
-  btn.onclick = () => {
-    wordsLimit = Number(btn.dataset.words);
-
-    document.querySelectorAll('.words-btn').forEach(b =>
-      b.classList.remove('active')
-    );
-    btn.classList.add('active');
-
-    resetGame();
-  };
-});
-
-function resetGame() {
+document.getElementById("newGameBtn").addEventListener("click", () => {
   clearInterval(timer);
   timer = null;
-  startTime = null;
-  correctChars = 0;
-  typedChars = 0;
   game.classList.remove('over');
 
-  if (mode === "time") {
-    progressLeft.textContent = `Time: ${gameTime}s`;
-    progressRight.textContent = `WPM: 0`;
-  } else {
-    progressLeft.textContent = `Words: 0/${wordsLimit}`;
-    progressRight.textContent = `WPM: 0`;
-  }
+  correctChars = 0;
+  typedChars = 0;
+
+  progressLeft.textContent = "";
+  progressRight.textContent = "";
 
   buildWords();
-  game.focus();
-}
-
-const blurOverlay = document.getElementById("blur-overlay");
-const focusError = document.getElementById("focus-error");
-
-game.addEventListener("blur", () => {
-  blurOverlay.style.display = "block";
-  focusError.style.display = "flex";
+  updateCursor();
 });
-
-game.addEventListener("focus", () => {
-  blurOverlay.style.display = "none";
-  focusError.style.display = "none";
-});
-
-buildWords();
-resetGame();
-updateGoalBar();
-game.focus();
