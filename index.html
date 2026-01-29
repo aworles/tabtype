@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TabType</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top-left title -->
+  <h1 id="title">Tab Type</h1>
+
+  <main>
+
+    <div id="header">
+
+      <!-- ROW 1: Mode tabs (left) + Options (right) -->
+      <div id="header-row1">
+
+        <div id="mode-tabs">
+          <button class="mode-tab active" data-mode="time">Time</button>
+          <button class="mode-tab" data-mode="words">Words</button>
+        </div>
+
+        <div id="mode-options">
+          <div id="time-options">
+            <button class="mode-btn time-btn active" data-time="15">15</button>
+            <button class="mode-btn time-btn" data-time="30">30</button>
+            <button class="mode-btn time-btn" data-time="60">60</button>
+          </div>
+
+          <div id="words-options" style="display:none;">
+            <button class="mode-btn words-btn active" data-words="10">10</button>
+            <button class="mode-btn words-btn" data-words="25">25</button>
+            <button class="mode-btn words-btn" data-words="50">50</button>
+            <button class="mode-btn words-btn" data-words="100">100</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ROW 2: Progress + WPM -->
+      <div id="info">
+        <span id="progress-left"></span>
+        <span id="progress-right"></span>
+      </div>
+
+    </div>
+
+    <!-- GOAL DISPLAY -->
+    <div id="goal-display">Goal: 50 WPM</div>
+
+    <!-- PROGRESS BAR -->
+    <div id="goal-bar">
+      <div id="goal-bar-fill"></div>
+    </div>
+    <div id="goal-bar-text">Highest WPM: 0 / 50</div>
+
+    <!-- GAME AREA -->
+    <div id="game" tabindex="0">
+      <div id="blur-overlay"></div>
+      <div id="focus-error">Click here to focus</div>
+
+      <div id="words"></div>
+      <div id="cursor"></div>
+    </div>
+
+    <!-- NEW GAME BUTTON -->
+    <button id="newGameBtn">New game</button>
+
+  </main>
+
+  <!-- CONFETTI -->
+  <div id="confetti-container"></div>
+
+  <script src="typing.js"></script>
+</body>
+</html>
