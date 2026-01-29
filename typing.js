@@ -1,4 +1,3 @@
-// ===== WORDS =====
 const WORDS = `
 in one good real one not school set they state high life consider
 on and not come what also for set point can want as while with of
@@ -7,24 +6,21 @@ program work end you home place around while place problem end begin
 interest public where see time those increase give think seem small
 `.trim().split(/\s+/);
 
-// ===== STATE =====
-let mode = "time";      // "time" or "words"
-let gameTime = 15;      // seconds
-let wordsLimit = 10;    // for words mode
-
+let gameTime = 15;
 let timer = null;
 let startTime = null;
 let correctChars = 0;
 let typedChars = 0;
 
-let wordIndex = 0;
-let letterIndex = 0;
+let mode = "time";
+let wordsLimit = 10;
 
 let highestWpm = 0;
 const goal = 50;
-let goalCode = "---";   // will change when goal reached
 
-// ===== ELEMENTS =====
+// ⭐ NEW: code shown after reaching goal
+let goalCode = "---";
+
 const game = document.getElementById('game');
 const wordsEl = document.getElementById('words');
 const cursor = document.getElementById('cursor');
@@ -34,19 +30,20 @@ const progressRight = document.getElementById('progress-right');
 
 const goalBarFill = document.getElementById('goal-bar-fill');
 const goalBarText = document.getElementById('goal-bar-text');
+
+// ⭐ NEW: code element
 const goalCodeEl = document.getElementById('goal-code');
 
-const modeTabs = document.querySelectorAll('.mode-tab');
-const timeButtons = document.querySelectorAll('.time-btn');
-const wordsButtons = document.querySelectorAll('.words-btn');
+let wordIndex = 0;
+let letterIndex = 0;
 
-const timeOptions = document.getElementById('time-options');
-const wordsOptions = document.getElementById('words-options');
+// ⭐ NEW: update code display
+function updateGoalCode() {
+  if (goalCodeEl) {
+    goalCodeEl.textContent = "Code: " + goalCode;
+  }
+}
 
-const newGameBtn = document.getElementById('newGameBtn');
-const confettiContainer = document.getElementById('confetti-container');
-
-// ===== HELPERS =====
 function randomWord() {
   return WORDS[Math.floor(Math.random() * WORDS.length)];
 }
@@ -119,23 +116,10 @@ function updateGoalBar() {
   }
 }
 
-function updateGoalCode() {
-  goalCodeEl.textContent = "Code: " + goalCode;
-}
-
-// ===== CODE CLICK (COPY) =====
-goalCodeEl.addEventListener("click", () => {
-  if (goalCode === "---") return;
-  navigator.clipboard.writeText(goalCode);
-  goalCodeEl.classList.add("copied");
-  setTimeout(() => goalCodeEl.classList.remove("copied"), 600);
-});
-
-// ===== CONFETTI =====
 function baguetteConfetti() {
-  const total = 120;
+  const container = document.getElementById("confetti-container");
 
-  for (let i = 0; i < total; i++) {
+  for (let i = 0; i < 120; i++) {
     setTimeout(() => {
       const el = document.createElement("div");
       el.className = "baguette";
@@ -143,21 +127,17 @@ function baguetteConfetti() {
       const icons = ["🥖", "🥐"];
       el.textContent = icons[Math.floor(Math.random() * icons.length)];
 
-      const slice = 100 / total;
-      const base = slice * i;
-      const jitter = Math.random() * slice;
-      el.style.left = (base + jitter) + "vw";
-
+      el.style.left = Math.random() * 100 + "vw";
       el.style.fontSize = (1.5 + Math.random() * 2.5) + "rem";
       el.style.animationDuration = (4 + Math.random() * 3) + "s";
+      el.style.animationTimingFunction = "linear";
 
-      confettiContainer.appendChild(el);
+      container.appendChild(el);
       setTimeout(() => el.remove(), 8000);
     }, i * 20);
   }
 }
 
-// ===== END GAME =====
 function endGame() {
   clearInterval(timer);
   timer = null;
@@ -179,14 +159,13 @@ function endGame() {
     if (oldBest < goal && highestWpm >= goal) {
       baguetteConfetti();
 
-      // ⭐ YOUR CODE VALUE HERE
-      goalCode = "49201";   // change this to whatever you want
+      // ⭐ NEW: set your code here
+      goalCode = "49201";  
       updateGoalCode();
     }
   }
 }
 
-// ===== KEYBOARD HANDLING =====
 game.addEventListener('keydown', e => {
   if (game.classList.contains('over')) return;
 
@@ -198,7 +177,6 @@ game.addEventListener('keydown', e => {
     startTimer();
   }
 
-  // Normal character
   if (e.key.length === 1 && e.key !== ' ') {
     if (letterIndex < letters.length) {
       const letter = letters[letterIndex];
@@ -225,7 +203,6 @@ game.addEventListener('keydown', e => {
     }
   }
 
-  // Backspace
   if (e.key === 'Backspace') {
     if (!timer && typedChars > 0) startTimer();
 
@@ -263,7 +240,6 @@ game.addEventListener('keydown', e => {
     }
   }
 
-  // Space
   if (e.key === ' ') {
     if (!timer && typedChars > 0) startTimer();
 
@@ -291,7 +267,6 @@ game.addEventListener('keydown', e => {
   }
 });
 
-// ===== CURSOR =====
 function updateCursor() {
   const word = wordsEl.children[wordIndex];
   const letter = word?.children[letterIndex] || word?.lastChild;
@@ -300,106 +275,107 @@ function updateCursor() {
   const rect = letter.getBoundingClientRect();
   const gameRect = game.getBoundingClientRect();
 
-  cursor.style.top = (rect.top - gameRect.top) + "px";
-  cursor.style.left = (rect.left - gameRect.left) + "px";
+  cursor.style.top = rect.top - gameRect.top + 'px';
+  cursor.style.left =
+    (letter === word.children[letterIndex]
+      ? rect.left
+      : rect.right) - gameRect.left + 'px';
+
+  if (rect.top - gameRect.top > 70) {
+    wordsEl.style.marginTop =
+      (parseInt(wordsEl.style.marginTop || 0) - 36) + 'px';
+  }
 }
 
-// ===== NEW GAME BUTTON =====
-newGameBtn.addEventListener("click", () => {
+document.getElementById('newGameBtn').onclick = resetGame;
+
+document.querySelectorAll('.time-btn').forEach(btn => {
+  btn.onclick = () => {
+    gameTime = Number(btn.dataset.time);
+
+    document.querySelectorAll('.time-btn').forEach(b =>
+      b.classList.remove('active')
+    );
+    btn.classList.add('active');
+
+    resetGame();
+  };
+});
+
+document.querySelector('[data-mode="time"]').onclick = () => {
+  mode = "time";
+  document.getElementById("time-options").style.display = "flex";
+  document.getElementById("words-options").style.display = "none";
+
+  document.querySelectorAll('.mode-tab').forEach(b =>
+    b.classList.remove('active')
+  );
+  document.querySelector('[data-mode="time"]').classList.add('active');
+
+  resetGame();
+};
+
+document.querySelector('[data-mode="words"]').onclick = () => {
+  mode = "words";
+  document.getElementById("time-options").style.display = "none";
+  document.getElementById("words-options").style.display = "flex";
+
+  document.querySelectorAll('.mode-tab').forEach(b =>
+    b.classList.remove('active')
+  );
+  document.querySelector('[data-mode="words"]').classList.add('active');
+
+  resetGame();
+};
+
+document.querySelectorAll('.words-btn').forEach(btn => {
+  btn.onclick = () => {
+    wordsLimit = Number(btn.dataset.words);
+
+    document.querySelectorAll('.words-btn').forEach(b =>
+      b.classList.remove('active')
+    );
+    btn.classList.add('active');
+
+    resetGame();
+  };
+});
+
+function resetGame() {
   clearInterval(timer);
   timer = null;
-  game.classList.remove('over');
-
+  startTime = null;
   correctChars = 0;
   typedChars = 0;
+  game.classList.remove('over');
 
   if (mode === "time") {
     progressLeft.textContent = `Time: ${gameTime}s`;
+    progressRight.textContent = `WPM: 0`;
   } else {
     progressLeft.textContent = `Words: 0/${wordsLimit}`;
+    progressRight.textContent = `WPM: 0`;
   }
-  progressRight.textContent = "WPM: 0";
 
   buildWords();
-  updateCursor();
+  game.focus();
+}
+
+const blurOverlay = document.getElementById("blur-overlay");
+const focusError = document.getElementById("focus-error");
+
+game.addEventListener("blur", () => {
+  blurOverlay.style.display = "block";
+  focusError.style.display = "flex";
 });
 
-// ===== MODE TABS =====
-modeTabs.forEach(tab => {
-  tab.addEventListener('click', () => {
-    modeTabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    mode = tab.dataset.mode;
-
-    if (mode === "time") {
-      timeOptions.style.display = "flex";
-      wordsOptions.style.display = "none";
-      progressLeft.textContent = `Time: ${gameTime}s`;
-    } else {
-      timeOptions.style.display = "none";
-      wordsOptions.style.display = "flex";
-      progressLeft.textContent = `Words: 0/${wordsLimit}`;
-    }
-
-    clearInterval(timer);
-    timer = null;
-    game.classList.remove('over');
-    correctChars = 0;
-    typedChars = 0;
-    progressRight.textContent = "WPM: 0";
-
-    buildWords();
-    updateCursor();
-  });
+game.addEventListener("focus", () => {
+  blurOverlay.style.display = "none";
+  focusError.style.display = "none";
 });
 
-// ===== TIME BUTTONS =====
-timeButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    timeButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    gameTime = parseInt(btn.dataset.time, 10);
-    if (mode === "time") {
-      progressLeft.textContent = `Time: ${gameTime}s`;
-    }
-  });
-});
-
-// ===== WORDS BUTTONS =====
-wordsButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    wordsButtons.forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-
-    wordsLimit = parseInt(btn.dataset.words, 10);
-    if (mode === "words") {
-      progressLeft.textContent = `Words: 0/${wordsLimit}`;
-    }
-
-    clearInterval(timer);
-    timer = null;
-    game.classList.remove('over');
-    correctChars = 0;
-    typedChars = 0;
-    progressRight.textContent = "WPM: 0";
-
-    buildWords();
-    updateCursor();
-  });
-});
-
-// ===== INITIALIZE =====
-document.addEventListener("DOMContentLoaded", () => {
-  buildWords();
-  updateGoalBar();
-  updateGoalCode();
-
-  if (mode === "time") {
-    progressLeft.textContent = `Time: ${gameTime}s`;
-  } else {
-    progressLeft.textContent = `Words: 0/${wordsLimit}`;
-  }
-  progressRight.textContent = "WPM: 0";
-});
+buildWords();
+resetGame();
+updateGoalBar();
+updateGoalCode();
+game.focus();
