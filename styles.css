@@ -1,19 +1,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg: #000;
+  --bg: linear-gradient(180deg, #1a1a1a, #000000);
   --primary: #ffffff;
   --text: #ffffff;
   --muted: #777;
   --gradient: linear-gradient(90deg, #000000, #ffffff);
+  
 }
 
 body {
   background: var(--bg);
+  background-attachment: fixed;
   color: var(--text);
   font-family: sans-serif;
   font-size: 1.4rem;
 }
+
 
 /* Top-left title */
 #title {
