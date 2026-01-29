@@ -1,3 +1,4 @@
+// ===== WORDS =====
 const WORDS = `
 in one good real one not school set they state high life consider
 on and not come what also for set point can want as while with of
@@ -6,19 +7,24 @@ program work end you home place around while place problem end begin
 interest public where see time those increase give think seem small
 `.trim().split(/\s+/);
 
-let gameTime = 15;
+// ===== STATE =====
+let mode = "time";      // "time" or "words"
+let gameTime = 15;      // seconds
+let wordsLimit = 10;    // for words mode
+
 let timer = null;
 let startTime = null;
 let correctChars = 0;
 let typedChars = 0;
 
-let mode = "time";
-let wordsLimit = 10;
+let wordIndex = 0;
+let letterIndex = 0;
 
 let highestWpm = 0;
-let goalCode = "---"; // default until goal is reached
 const goal = 50;
+let goalCode = "---";   // will change when goal reached
 
+// ===== ELEMENTS =====
 const game = document.getElementById('game');
 const wordsEl = document.getElementById('words');
 const cursor = document.getElementById('cursor');
@@ -30,9 +36,17 @@ const goalBarFill = document.getElementById('goal-bar-fill');
 const goalBarText = document.getElementById('goal-bar-text');
 const goalCodeEl = document.getElementById('goal-code');
 
-let wordIndex = 0;
-let letterIndex = 0;
+const modeTabs = document.querySelectorAll('.mode-tab');
+const timeButtons = document.querySelectorAll('.time-btn');
+const wordsButtons = document.querySelectorAll('.words-btn');
 
+const timeOptions = document.getElementById('time-options');
+const wordsOptions = document.getElementById('words-options');
+
+const newGameBtn = document.getElementById('newGameBtn');
+const confettiContainer = document.getElementById('confetti-container');
+
+// ===== HELPERS =====
 function randomWord() {
   return WORDS[Math.floor(Math.random() * WORDS.length)];
 }
@@ -109,18 +123,16 @@ function updateGoalCode() {
   goalCodeEl.textContent = "Code: " + goalCode;
 }
 
-updateGoalCode();
-
+// ===== CODE CLICK (COPY) =====
 goalCodeEl.addEventListener("click", () => {
-  if (goalCode !== "---") {
-    navigator.clipboard.writeText(goalCode);
-    goalCodeEl.classList.add("copied");
-    setTimeout(() => goalCodeEl.classList.remove("copied"), 600);
-  }
+  if (goalCode === "---") return;
+  navigator.clipboard.writeText(goalCode);
+  goalCodeEl.classList.add("copied");
+  setTimeout(() => goalCodeEl.classList.remove("copied"), 600);
 });
 
+// ===== CONFETTI =====
 function baguetteConfetti() {
-  const container = document.getElementById("confetti-container");
   const total = 120;
 
   for (let i = 0; i < total; i++) {
@@ -139,12 +151,13 @@ function baguetteConfetti() {
       el.style.fontSize = (1.5 + Math.random() * 2.5) + "rem";
       el.style.animationDuration = (4 + Math.random() * 3) + "s";
 
-      container.appendChild(el);
+      confettiContainer.appendChild(el);
       setTimeout(() => el.remove(), 8000);
     }, i * 20);
   }
 }
 
+// ===== END GAME =====
 function endGame() {
   clearInterval(timer);
   timer = null;
@@ -166,13 +179,14 @@ function endGame() {
     if (oldBest < goal && highestWpm >= goal) {
       baguetteConfetti();
 
-      // ⭐ YOUR CUSTOM CODE HERE
-      goalCode = "49201";  
+      // ⭐ YOUR CODE VALUE HERE
+      goalCode = "49201";   // change this to whatever you want
       updateGoalCode();
     }
   }
 }
 
+// ===== KEYBOARD HANDLING =====
 game.addEventListener('keydown', e => {
   if (game.classList.contains('over')) return;
 
@@ -184,6 +198,7 @@ game.addEventListener('keydown', e => {
     startTimer();
   }
 
+  // Normal character
   if (e.key.length === 1 && e.key !== ' ') {
     if (letterIndex < letters.length) {
       const letter = letters[letterIndex];
@@ -210,6 +225,7 @@ game.addEventListener('keydown', e => {
     }
   }
 
+  // Backspace
   if (e.key === 'Backspace') {
     if (!timer && typedChars > 0) startTimer();
 
@@ -247,6 +263,7 @@ game.addEventListener('keydown', e => {
     }
   }
 
+  // Space
   if (e.key === ' ') {
     if (!timer && typedChars > 0) startTimer();
 
@@ -274,6 +291,7 @@ game.addEventListener('keydown', e => {
   }
 });
 
+// ===== CURSOR =====
 function updateCursor() {
   const word = wordsEl.children[wordIndex];
   const letter = word?.children[letterIndex] || word?.lastChild;
@@ -286,7 +304,8 @@ function updateCursor() {
   cursor.style.left = (rect.left - gameRect.left) + "px";
 }
 
-document.getElementById("newGameBtn").addEventListener("click", () => {
+// ===== NEW GAME BUTTON =====
+newGameBtn.addEventListener("click", () => {
   clearInterval(timer);
   timer = null;
   game.classList.remove('over');
@@ -294,9 +313,93 @@ document.getElementById("newGameBtn").addEventListener("click", () => {
   correctChars = 0;
   typedChars = 0;
 
-  progressLeft.textContent = "";
-  progressRight.textContent = "";
+  if (mode === "time") {
+    progressLeft.textContent = `Time: ${gameTime}s`;
+  } else {
+    progressLeft.textContent = `Words: 0/${wordsLimit}`;
+  }
+  progressRight.textContent = "WPM: 0";
 
   buildWords();
   updateCursor();
+});
+
+// ===== MODE TABS =====
+modeTabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    modeTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+
+    mode = tab.dataset.mode;
+
+    if (mode === "time") {
+      timeOptions.style.display = "flex";
+      wordsOptions.style.display = "none";
+      progressLeft.textContent = `Time: ${gameTime}s`;
+    } else {
+      timeOptions.style.display = "none";
+      wordsOptions.style.display = "flex";
+      progressLeft.textContent = `Words: 0/${wordsLimit}`;
+    }
+
+    clearInterval(timer);
+    timer = null;
+    game.classList.remove('over');
+    correctChars = 0;
+    typedChars = 0;
+    progressRight.textContent = "WPM: 0";
+
+    buildWords();
+    updateCursor();
+  });
+});
+
+// ===== TIME BUTTONS =====
+timeButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    timeButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    gameTime = parseInt(btn.dataset.time, 10);
+    if (mode === "time") {
+      progressLeft.textContent = `Time: ${gameTime}s`;
+    }
+  });
+});
+
+// ===== WORDS BUTTONS =====
+wordsButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    wordsButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+
+    wordsLimit = parseInt(btn.dataset.words, 10);
+    if (mode === "words") {
+      progressLeft.textContent = `Words: 0/${wordsLimit}`;
+    }
+
+    clearInterval(timer);
+    timer = null;
+    game.classList.remove('over');
+    correctChars = 0;
+    typedChars = 0;
+    progressRight.textContent = "WPM: 0";
+
+    buildWords();
+    updateCursor();
+  });
+});
+
+// ===== INITIALIZE =====
+document.addEventListener("DOMContentLoaded", () => {
+  buildWords();
+  updateGoalBar();
+  updateGoalCode();
+
+  if (mode === "time") {
+    progressLeft.textContent = `Time: ${gameTime}s`;
+  } else {
+    progressLeft.textContent = `Words: 0/${wordsLimit}`;
+  }
+  progressRight.textContent = "WPM: 0";
 });
