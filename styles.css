@@ -267,6 +267,11 @@ main {
   user-select: none;
 }
 
+#newGameBtn {
+  display: block;
+  margin: 20px auto 0 auto; /* centers horizontally */
+}
+
 @keyframes fall {
   0% {
     transform: translateY(-50px) rotate(0deg);
