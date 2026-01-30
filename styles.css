@@ -30,7 +30,7 @@ body {
   line-height: 1;
   white-space: nowrap;
   display: inline-block;
-  transform: scaleX(1.5); /* matches TabType width */
+  transform: scaleX(1); /* matches TabType width */
   transform-origin: left center;
 }
 
