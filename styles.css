@@ -240,7 +240,8 @@ main {
   padding: 6px 18px;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: 20px;
+  display: block;
+  margin: 20px auto 0 auto; /* center horizontally */
   transition: 0.15s;
 }
 
@@ -265,11 +266,6 @@ main {
   font-size: 2rem;
   animation: fall 2.5s linear forwards;
   user-select: none;
-}
-
-#newGameBtn {
-  display: block;
-  margin: 20px auto 0 auto; /* centers horizontally */
 }
 
 @keyframes fall {
