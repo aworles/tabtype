@@ -20,13 +20,18 @@ body {
 
 /* Top-left title */
 #title {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  margin: 0;
-  color: var(--primary);
-  font-size: 2rem;
-  font-family: 'Syne', sans-serif;
+  font-family: "Syne", sans-serif;
+  font-size: 42px;
+  font-weight: 400; /* TabType uses a lighter weight */
+  color: white;
+  margin: 25px 0 0 25px; /* top-left */
+  letter-spacing: -1.2px;
+  font-stretch: 85%; /* condensed like TabType */
+  line-height: 1;
+  white-space: nowrap;
+  display: inline-block;
+  transform: scaleX(0.88); /* matches TabType width */
+  transform-origin: left center;
 }
 
 main {
