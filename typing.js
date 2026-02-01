@@ -374,8 +374,14 @@ game.addEventListener("focus", () => {
   focusError.style.display = "none";
 });
 
+
+document.querySelector(".overlay-start").addEventListener("click", () => {
+  document.querySelector(".overlay-screen").style.display = "none";
+});
+
 buildWords();
 resetGame();
 updateGoalBar();
 updateGoalCode();
 game.focus();
+
