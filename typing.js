@@ -13,7 +13,7 @@ let correctChars = 0;
 let typedChars = 0;
 
 let mode = "time";
-let wordsLimit = 10;
+let wordsLimit = 25;
 
 let highestWpm = 0;
 const goal = 55;
