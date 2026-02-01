@@ -16,7 +16,7 @@ let mode = "time";
 let wordsLimit = 10;
 
 let highestWpm = 0;
-const goal = 50;
+const goal = 55;
 
 // ⭐ NEW: code shown after reaching goal
 let goalCode = "---";
