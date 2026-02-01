@@ -311,6 +311,7 @@ main {
 .overlay-title {
   font-family: "Syne", sans-serif;
   font-size: 42px;
+  font-stretch: 85%; 
   font-weight: 500;
   letter-spacing: -1px;
   transform: scaleX(0.92);
