@@ -283,3 +283,62 @@ main {
     opacity: 0;
   }
 }
+
+/* ---------------------------------------------------------
+   TABTYPE OVERLAY INTRO SCREEN
+--------------------------------------------------------- */
+
+.overlay-screen {
+  position: fixed;
+  inset: 0;
+  background: #000000cc;
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.overlay-box {
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  padding: 40px;
+  border-radius: 16px;
+  max-width: 500px;
+  text-align: center;
+}
+
+.overlay-title {
+  font-family: "Syne", sans-serif;
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  transform: scaleX(0.92);
+  margin-bottom: 20px;
+}
+
+.overlay-text {
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
+  opacity: 0.8;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.overlay-start {
+  background: #ffffff10;
+  border: 1px solid #ffffff30;
+  padding: 14px 40px;
+  font-size: 20px;
+  border-radius: 12px;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.2s;
+  font-family: "Inter", sans-serif;
+}
+
+.overlay-start:hover {
+  background: #ffffff20;
+  transform: translateY(-2px);
+}
