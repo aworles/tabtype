@@ -15,10 +15,10 @@
 
     <p class="overlay-text">
       Welcome to TabType. It's easy to determine based off the name that it is indeed a typing test.<br><br>
-      • You have a clear goal, and that is to reach 50wpm.<br>
+      • You have a clear goal, and that is to reach 55wpm.<br>
       • Use any keyboard that you would like, with unlimited amount of tries.<br>
       • Accuracy and WPM are calculated live. You are allowed to choose between modes added to give yourself an advantage.<br>
-      • Once you complete this quest, a code will be displayed on the screen which you can use for later.<br>
+      • Once you complete this quest, a code will be displayed.<br>
       • Save this code for later, as reloading the page will result in a loss of all progress.<br>
       • Press Start when you're ready, and good luck!<br>
     </p>
@@ -46,15 +46,10 @@
         <div id="mode-options">
           <div id="time-options">
             <button class="mode-btn time-btn active" data-time="15">15</button>
-            <button class="mode-btn time-btn" data-time="30">30</button>
-            <button class="mode-btn time-btn" data-time="60">60</button>
           </div>
 
           <div id="words-options" style="display:none;">
-            <button class="mode-btn words-btn active" data-words="10">10</button>
             <button class="mode-btn words-btn" data-words="25">25</button>
-            <button class="mode-btn words-btn" data-words="50">50</button>
-            <button class="mode-btn words-btn" data-words="100">100</button>
           </div>
         </div>
 
@@ -70,7 +65,7 @@
 
     <!-- ⭐ GOAL + CODE ROW (required for JS to work) -->
     <div id="goal-row">
-      <div id="goal-display">Goal: 50 WPM</div>
+      <div id="goal-display">Goal: 55 WPM</div>
       <div id="goal-code">Code: ---</div>
     </div>
 
@@ -78,7 +73,7 @@
     <div id="goal-bar">
       <div id="goal-bar-fill"></div>
     </div>
-    <div id="goal-bar-text">Highest WPM: 0 / 50</div>
+    <div id="goal-bar-text">Highest WPM: 0 / 55</div>
 
     <!-- GAME AREA -->
     <div id="game" tabindex="0">
