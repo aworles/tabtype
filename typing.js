@@ -6,17 +6,17 @@ program work end you home place around while place problem end begin
 interest public where see time those increase give think seem small
 `.trim().split(/\s+/);
 
-let gameTime = 15;
+let gameTime = 15;          // ⭐ default 15s
 let timer = null;
 let startTime = null;
 let correctChars = 0;
 let typedChars = 0;
 
 let mode = "time";
-let wordsLimit = 25;
+let wordsLimit = 25;        // ⭐ default 25 words
 
 let highestWpm = 0;
-const goal = 55;
+const goal = 55;            // ⭐ 55 WPM goal
 
 // ⭐ NEW: code shown after reaching goal
 let goalCode = "---";
@@ -160,7 +160,7 @@ function endGame() {
       baguetteConfetti();
 
       // ⭐ NEW: set your code here
-      goalCode = "49201";  
+      goalCode = "49201";
       updateGoalCode();
     }
   }
@@ -289,6 +289,7 @@ function updateCursor() {
 
 document.getElementById('newGameBtn').onclick = resetGame;
 
+// TIME BUTTONS
 document.querySelectorAll('.time-btn').forEach(btn => {
   btn.onclick = () => {
     gameTime = Number(btn.dataset.time);
@@ -302,8 +303,12 @@ document.querySelectorAll('.time-btn').forEach(btn => {
   };
 });
 
+// MODE TABS
 document.querySelector('[data-mode="time"]').onclick = () => {
   mode = "time";
+
+  // ⭐ force default 15s and highlight its button
+  gameTime = 15;
   document.getElementById("time-options").style.display = "flex";
   document.getElementById("words-options").style.display = "none";
 
@@ -312,11 +317,20 @@ document.querySelector('[data-mode="time"]').onclick = () => {
   );
   document.querySelector('[data-mode="time"]').classList.add('active');
 
+  document.querySelectorAll('.time-btn').forEach(b =>
+    b.classList.remove('active')
+  );
+  const btn15 = document.querySelector('.time-btn[data-time="15"]');
+  if (btn15) btn15.classList.add('active');
+
   resetGame();
 };
 
 document.querySelector('[data-mode="words"]').onclick = () => {
   mode = "words";
+
+  // ⭐ force default 25 words and highlight its button
+  wordsLimit = 25;
   document.getElementById("time-options").style.display = "none";
   document.getElementById("words-options").style.display = "flex";
 
@@ -325,9 +339,16 @@ document.querySelector('[data-mode="words"]').onclick = () => {
   );
   document.querySelector('[data-mode="words"]').classList.add('active');
 
+  document.querySelectorAll('.words-btn').forEach(b =>
+    b.classList.remove('active')
+  );
+  const btn25 = document.querySelector('.words-btn[data-words="25"]');
+  if (btn25) btn25.classList.add('active');
+
   resetGame();
 };
 
+// WORDS BUTTONS
 document.querySelectorAll('.words-btn').forEach(btn => {
   btn.onclick = () => {
     wordsLimit = Number(btn.dataset.words);
@@ -374,7 +395,6 @@ game.addEventListener("focus", () => {
   focusError.style.display = "none";
 });
 
-
 document.querySelector(".overlay-start").addEventListener("click", () => {
   document.querySelector(".overlay-screen").style.display = "none";
 });
@@ -384,4 +404,3 @@ resetGame();
 updateGoalBar();
 updateGoalCode();
 game.focus();
-
