@@ -160,7 +160,7 @@ function endGame() {
       baguetteConfetti();
 
       // ⭐ NEW: set your code here
-      goalCode = "49201";
+      goalCode = "903";
       updateGoalCode();
     }
   }
